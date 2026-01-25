@@ -63,9 +63,9 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-            docker pull yh0872/mvest-core:latest
-            docker rm -f mvest-core-container || true
-            docker run -d \
+            sudo docker pull yh0872/mvest-core:latest
+            sudo docker rm -f mvest-core-container || true
+            sudo docker run -d \
               -p 9000:9000 \
               --name mvest-core-container \
               yh0872/mvest-core:latest
