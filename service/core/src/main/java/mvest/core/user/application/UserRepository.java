@@ -11,4 +11,5 @@ public interface UserRepository {
     User create(Platform platform, String platformId, UserSignupDTO signupDTO);
     Optional<User> findByPlatform(Platform platform, String platformId);
     void saveToken(Long userId, JwtTokenDTO token);
+    void deleteToken(Long userId);
 }

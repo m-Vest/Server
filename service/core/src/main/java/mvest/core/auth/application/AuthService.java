@@ -69,6 +69,7 @@ public class AuthService {
     }
 
     public void logout(Long userId) {
+        userRepository.deleteToken(userId);
     }
 
     public JwtTokenDTO reissue(String refreshToken) {

@@ -50,4 +50,9 @@ public class UserRepositoryImpl implements UserRepository {
                 .build();
         tokenRedisRepository.save(tokenEntity);
     }
+
+    @Override
+    public void deleteToken(Long userId) {
+        tokenRedisRepository.deleteById(userId);
+    }
 }
