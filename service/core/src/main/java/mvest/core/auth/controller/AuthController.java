@@ -26,7 +26,7 @@ public class AuthController {
             @NotBlank @RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String signupToken,
             @Valid @RequestBody UserSignupDTO userSignupDTO
     ) {
-        return ResponseDTO.success(CommonSuccessCode.OK, authService.signup(signupToken, userSignupDTO));
+        return ResponseDTO.success(CommonSuccessCode.CREATED, authService.signup(signupToken, userSignupDTO));
     }
 
     @PostMapping("/login")
