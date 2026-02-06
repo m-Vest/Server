@@ -1,8 +1,18 @@
 package mvest.core.auth.dto;
 
-public record ClaimDTO(Long userId, boolean isAccessToken) {
+import mvest.core.auth.jwt.TokenType;
 
-    public static ClaimDTO of(Long userId, boolean isAccessToken) {
-        return new ClaimDTO(userId, isAccessToken);
+public record ClaimDTO(
+        Long userId,
+        String platform,
+        String platformId,
+        TokenType tokenType
+) {
+    public static ClaimDTO access(Long userId, TokenType tokenType) {
+        return new ClaimDTO(userId, null, null, tokenType);
+    }
+
+    public static ClaimDTO signup(String platform, String platformId, TokenType tokenType) {
+        return new ClaimDTO(null, platform, platformId, tokenType);
     }
 }

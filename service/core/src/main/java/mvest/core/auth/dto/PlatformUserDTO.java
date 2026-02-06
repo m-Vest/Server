@@ -1,8 +1,16 @@
 package mvest.core.auth.dto;
 
-public record PlatformUserDTO(String platformId) {
+import mvest.core.user.domain.Platform;
 
-    public static PlatformUserDTO of(String platformId) {
-        return new PlatformUserDTO(platformId);
+public record PlatformUserDTO(
+        Platform platform,
+        String platformId
+) {
+
+    public static PlatformUserDTO of(
+            Platform platform,
+            String platformId
+    ) {
+        return new PlatformUserDTO(platform, platformId);
     }
 }

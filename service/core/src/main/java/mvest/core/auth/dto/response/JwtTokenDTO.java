@@ -4,8 +4,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record JwtTokenDTO(String accessToken,
-                          String refreshToken) {
+public record JwtTokenDTO(
+        String accessToken,
+        String refreshToken
+) {
 
     public static JwtTokenDTO of(String accessToken, String refreshToken) {
         return JwtTokenDTO.builder()
