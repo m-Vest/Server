@@ -1,6 +1,6 @@
-package msa.board.common.event;
+package mvest.common.event;
 
-import msa.board.common.dataserializer.DataSerializer;
+import mvest.common.dataserializer.DataSerializer;
 import lombok.Getter;
 
 @Getter

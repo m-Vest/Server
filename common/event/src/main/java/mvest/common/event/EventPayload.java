@@ -1,4 +1,4 @@
-package msa.board.common.event;
+package mvest.common.event;
 
 public interface EventPayload {
 }

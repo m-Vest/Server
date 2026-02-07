@@ -1,7 +1,7 @@
-package msa.board.common.event;
+package mvest.common.event;
 
-import msa.board.common.event.payload.OrderSubmittedEventPayload;
-import msa.board.common.event.payload.OrderType;
+import mvest.common.event.payload.OrderSubmittedEventPayload;
+import mvest.common.event.payload.OrderType;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

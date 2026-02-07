@@ -1,4 +1,4 @@
-package msa.board.common.event.payload;
+package mvest.common.event.payload;
 
 public enum OrderType {
     BUY, SELL

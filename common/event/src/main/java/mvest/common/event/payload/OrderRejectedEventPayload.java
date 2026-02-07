@@ -1,10 +1,10 @@
-package msa.board.common.event.payload;
+package mvest.common.event.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import msa.board.common.event.EventPayload;
+import mvest.common.event.EventPayload;
 
 import java.time.LocalDateTime;
 

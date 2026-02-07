@@ -1,6 +1,6 @@
-package msa.board.common.event.payload;
+package mvest.common.event.payload;
 
-import msa.board.common.event.EventPayload;
+import mvest.common.event.EventPayload;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

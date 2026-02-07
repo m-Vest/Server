@@ -1,10 +1,10 @@
-package msa.board.common.event;
+package mvest.common.event;
 
-import msa.board.common.event.payload.*;
+import mvest.common.event.payload.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import msa.board.common.event.payload.*;
+import mvest.common.event.payload.*;
 
 @Slf4j
 @Getter
