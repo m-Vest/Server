@@ -27,11 +27,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      # core application.yml
-      - name: Generate application.yml for core
+      # application.yml 생성 (core / order / asset)
+      - name: Generate application.yml files
         run: |
           mkdir -p service/core/src/main/resources
-          echo "${{ secrets.CD_APPLICATION }}" > service/core/src/main/resources/application.yml
+          mkdir -p service/order/src/main/resources
+          mkdir -p service/asset/src/main/resources
+
+          echo "${{ secrets.CORE_APPLICATION }}" > service/core/src/main/resources/application.yml
+          echo "${{ secrets.ORDER_APPLICATION }}" > service/order/src/main/resources/application.yml
+          echo "${{ secrets.ASSET_APPLICATION }}" > service/asset/src/main/resources/application.yml
 
       # core 서비스만 빌드
       - name: Build core service
