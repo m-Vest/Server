@@ -15,37 +15,42 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "asset_change_history")
-public class AssetChangeHistoryEntity {
+@Table(name = "asset_transactions")
+public class AssetTransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderId;
+    @Column(unique = true)
+    private String orderId;
+
     private Long userId;
     private String stockCode;
-    private String changeType;
-    private int stockChange;
+    private String transactionType;
+    private BigDecimal price;
+    private int quantity;
     private BigDecimal cashChange;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     @Builder
-    public AssetChangeHistoryEntity(Long id,
-                                    Long orderId,
-                                    Long userId,
-                                    String stockCode,
-                                    String changeType,
-                                    int stockChange,
-                                    BigDecimal cashChange) {
+    public AssetTransactionEntity(Long id,
+                                  String orderId,
+                                  Long userId,
+                                  String stockCode,
+                                  String transactionType,
+                                  BigDecimal price,
+                                  int quantity,
+                                  BigDecimal cashChange) {
         this.id = id;
         this.orderId = orderId;
         this.userId = userId;
         this.stockCode = stockCode;
-        this.changeType = changeType;
-        this.stockChange = stockChange;
+        this.transactionType = transactionType;
+        this.price = price;
+        this.quantity = quantity;
         this.cashChange = cashChange;
     }
 }

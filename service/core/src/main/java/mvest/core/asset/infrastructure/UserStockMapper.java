@@ -1,21 +1,21 @@
 package mvest.core.asset.infrastructure;
 
-import mvest.core.asset.domain.UserAsset;
 
-public final class UserAssetMapper {
+import mvest.core.asset.domain.UserStock;
 
-    public static UserAsset toDomain(UserAssetEntity entity) {
-        return new UserAsset(
+public final class UserStockMapper {
+
+    public static UserStock toDomain(UserStockEntity entity) {
+        return new UserStock(
                 entity.getId(),
                 entity.getUserId(),
                 entity.getStockCode(),
-                entity.getQuantity(),
-                entity.getUpdatedAt()
+                entity.getQuantity()
         );
     }
 
-    public static UserAssetEntity toEntity(UserAsset domain) {
-        return UserAssetEntity.builder()
+    public static UserStockEntity toEntity(UserStock domain) {
+        return UserStockEntity.builder()
                 .id(domain.getId())
                 .userId(domain.getUserId())
                 .stockCode(domain.getStockCode())

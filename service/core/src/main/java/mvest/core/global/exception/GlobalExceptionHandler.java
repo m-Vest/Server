@@ -20,12 +20,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthException.class)
-    public ResponseDTO<Void> handleAuthException(BusinessException e) {
+    public ResponseDTO<Void> handleAuthException(AuthException e) {
         return ResponseDTO.failure(e.getErrorCode());
     }
 
     @ExceptionHandler(InfrastructureException.class)
-    public ResponseDTO<Void> handleInfrastructureException(BusinessException e) {
+    public ResponseDTO<Void> handleInfrastructureException(InfrastructureException e) {
         return ResponseDTO.failure(e.getErrorCode());
     }
 

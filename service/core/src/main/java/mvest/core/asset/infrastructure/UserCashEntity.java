@@ -1,6 +1,9 @@
 package mvest.core.asset.infrastructure;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,15 +24,15 @@ public class UserCashEntity {
     @Id
     private Long userId;
 
-    private BigDecimal cashBalance;
+    private BigDecimal balance;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Builder
     public UserCashEntity(Long userId,
-                          BigDecimal cashBalance) {
+                          BigDecimal balance) {
         this.userId = userId;
-        this.cashBalance = cashBalance;
+        this.balance = balance;
     }
 }

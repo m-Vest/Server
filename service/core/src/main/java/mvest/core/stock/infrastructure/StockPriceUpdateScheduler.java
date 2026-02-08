@@ -21,15 +21,5 @@ public class StockPriceUpdateScheduler {
     public void updateStockPrices() {
         List<StockPrice> prices = openApiClient.fetchStockPrices();
         redisRepository.save(prices);
-        prices.forEach(price ->
-                log.info(
-                        "[StockPriceScheduler] code={}, name={}, price={}, change={}, rate={}",
-                        price.getStockCode(),
-                        price.getStockName(),
-                        price.getPrice(),
-                        price.getChange(),
-                        price.getChangeRate()
-                )
-        );
     }
 }

@@ -32,6 +32,7 @@ public class AuthService {
 
     @Transactional
     public UserTokenDTO signup(String signupToken, UserSignupDTO userSignupDTO) {
+        signupToken = resolveToken(signupToken);
         jwtTokenValidator.validateSignupToken(signupToken);
         ClaimDTO claim = jwtTokenProvider.getClaimFromToken(signupToken);
         Platform platform = Platform.valueOf(claim.platform());
@@ -126,5 +127,19 @@ public class AuthService {
             return kakaoService.getPlatformUserInfo(platformToken);
         }
         throw new AuthException(AuthErrorCode.PLATFORM_NOT_FOUND);
+    }
+
+    private String resolveToken(String token) {
+        if (token == null || token.isBlank()) {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+        }
+
+        token = token.trim();
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        return token;
     }
 }

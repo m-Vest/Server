@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mvest.asset.domain.AssetTransaction;
 import mvest.common.event.payload.AssetChangeEventPayload;
 import mvest.common.event.payload.OrderType;
+import mvest.common.outboxmessagerelay.OutboxEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class AssetCommandService {
     private final UserCashRepository userCashRepository;
     private final UserStockRepository userStockRepository;
     private final AssetTransactionRepository assetTransactionRepository;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     public void applyAssetChange(AssetChangeEventPayload payload) {
 

@@ -6,14 +6,14 @@ import java.time.LocalDateTime;
 public class UserCash {
 
     private final Long userId;
-    private final BigDecimal cashBalance;
+    private final BigDecimal balance;
     private final LocalDateTime updatedAt;
 
     public UserCash(Long userId,
-                    BigDecimal cashBalance,
+                    BigDecimal balance,
                     LocalDateTime updatedAt) {
         this.userId = userId;
-        this.cashBalance = cashBalance;
+        this.balance = balance;
         this.updatedAt = updatedAt;
     }
 
@@ -21,11 +21,15 @@ public class UserCash {
         return userId;
     }
 
-    public BigDecimal getCashBalance() {
-        return cashBalance;
+    public BigDecimal getBalance() {
+        return balance;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public static UserCash initial(Long userId, BigDecimal balance) {
+        return new UserCash(userId, balance, null);
     }
 }
