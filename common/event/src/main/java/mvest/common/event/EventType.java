@@ -25,7 +25,7 @@ public enum EventType {
     APPLY_ASSET_CHANGE(AssetChangeEventPayload.class, Topic.MVEST_ASSET),
 
     // Asset → Core
-    ASSET_APPLIED(AssetAppliedEventPayload.class, Topic.MVEST_CORE);
+    ASSET_APPLIED(AssetChangeEventPayload.class, Topic.MVEST_CORE);
 
     private final Class<? extends EventPayload> payloadClass;
     private final String topic;
