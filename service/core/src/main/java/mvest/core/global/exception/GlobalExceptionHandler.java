@@ -15,7 +15,17 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseDTO<Void> handleSampleException(BusinessException e) {
+    public ResponseDTO<Void> handleBusinessException(BusinessException e) {
+        return ResponseDTO.failure(e.getErrorCode());
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseDTO<Void> handleAuthException(BusinessException e) {
+        return ResponseDTO.failure(e.getErrorCode());
+    }
+
+    @ExceptionHandler(InfrastructureException.class)
+    public ResponseDTO<Void> handleInfrastructureException(BusinessException e) {
         return ResponseDTO.failure(e.getErrorCode());
     }
 

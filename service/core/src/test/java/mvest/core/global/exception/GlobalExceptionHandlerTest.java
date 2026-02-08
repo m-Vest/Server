@@ -21,7 +21,7 @@ class GlobalExceptionHandlerTest {
         BusinessException exception = new BusinessException(CommonErrorCode.INTERNAL_SERVER_ERROR);
 
         // when
-        ResponseDTO<Void> response = exceptionHandler.handleSampleException(exception);
+        ResponseDTO<Void> response = exceptionHandler.handleBusinessException(exception);
 
         // then
         assertThat(response.code()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
