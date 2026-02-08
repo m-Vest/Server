@@ -17,4 +17,9 @@ public class AssetTransactionRepositoryImpl implements AssetTransactionRepositor
                 AssetTransactionMapper.toEntity(transaction);
         assetTransactionJpaRepository.save(entity);
     }
+
+    @Override
+    public boolean existsByOrderId(String orderId) {
+        return assetTransactionJpaRepository.existsByOrderId(orderId);
+    }
 }

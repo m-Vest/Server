@@ -23,7 +23,7 @@ public class AssetTransactionEntity {
     private Long id;
 
     @Column(unique = true)
-    private Long orderId;
+    private String orderId;
 
     private Long userId;
     private String stockCode;
@@ -37,7 +37,7 @@ public class AssetTransactionEntity {
 
     @Builder
     public AssetTransactionEntity(Long id,
-                                  Long orderId,
+                                  String orderId,
                                   Long userId,
                                   String stockCode,
                                   String transactionType,

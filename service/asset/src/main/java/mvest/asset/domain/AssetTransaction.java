@@ -1,12 +1,15 @@
 package mvest.asset.domain;
 
+import mvest.common.event.payload.AssetChangeEventPayload;
+import mvest.common.event.payload.OrderType;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class AssetTransaction {
 
     private final Long id;
-    private final Long orderId;
+    private final String orderId;
     private final Long userId;
     private final String stockCode;
     private final String transactionType;
@@ -16,7 +19,7 @@ public class AssetTransaction {
     private final LocalDateTime createdAt;
 
     public AssetTransaction(Long id,
-                            Long orderId,
+                            String orderId,
                             Long userId,
                             String stockCode,
                             String transactionType,
@@ -39,7 +42,7 @@ public class AssetTransaction {
         return id;
     }
 
-    public Long getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
@@ -82,6 +85,29 @@ public class AssetTransaction {
                 0,
                 amount,
                 null
+        );
+    }
+
+    public static AssetTransaction fromOrder(AssetChangeEventPayload payload) {
+
+        BigDecimal amount =
+                payload.getPrice().multiply(BigDecimal.valueOf(payload.getQuantity()));
+
+        BigDecimal cashChange =
+                payload.getOrderType() == OrderType.BUY
+                        ? amount.negate()
+                        : amount;
+
+        return new AssetTransaction(
+                null,
+                payload.getOrderId(),
+                payload.getUserId(),
+                payload.getStockCode(),
+                payload.getOrderType().name(),
+                payload.getPrice(),
+                payload.getQuantity(),
+                cashChange,
+                payload.getOccurredAt()
         );
     }
 }

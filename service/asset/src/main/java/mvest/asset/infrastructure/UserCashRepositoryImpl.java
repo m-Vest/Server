@@ -5,6 +5,8 @@ import mvest.asset.domain.UserCash;
 import mvest.asset.application.UserCashRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 @Repository
 @RequiredArgsConstructor
 public class UserCashRepositoryImpl implements UserCashRepository {
@@ -20,5 +22,15 @@ public class UserCashRepositoryImpl implements UserCashRepository {
     @Override
     public boolean existsByUserId(Long userId) {
         return userCashJpaRepository.existsById(userId);
+    }
+
+    @Override
+    public void increase(Long userId, BigDecimal amount) {
+        //TODO
+    }
+
+    @Override
+    public void decrease(Long userId, BigDecimal amount) {
+        //TODO
     }
 }
