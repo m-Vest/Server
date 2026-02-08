@@ -30,4 +30,14 @@ public class StockService {
                         .toList()
         );
     }
+
+    public StockPriceDTO getStockPrice(String stockCode) {
+
+        StockPrice stockPrice = stockRepository.findByStockCode(stockCode)
+                .orElseThrow(() ->
+                        new BusinessException(StockErrorCode.STOCK_NOT_FOUND)
+                );
+
+        return StockPriceDTO.from(stockPrice);
+    }
 }

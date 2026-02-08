@@ -11,6 +11,7 @@ import mvest.core.stock.domain.StockPrice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,6 +40,37 @@ public class StockRepositoryImpl implements StockRepository {
                     pricesNode,
                     new TypeReference<List<StockPrice>>() {}
             );
+        } catch (Exception e) {
+            throw new InfrastructureException(InfrastructureErrorCode.REDIS_PARSE_ERROR);
+        }
+    }
+
+    @Override
+    public Optional<StockPrice> findByStockCode(String stockCode) {
+        String data = stockPriceRedisRepository.findAllRaw();
+
+        if (data == null) {
+            return Optional.empty();
+        }
+
+        try {
+            JsonNode root = objectMapper.readTree(data);
+            JsonNode pricesNode = root.get("prices");
+
+            if (pricesNode == null || !pricesNode.isArray()) {
+                return Optional.empty();
+            }
+
+            for (JsonNode item : pricesNode) {
+                if (stockCode.equals(item.get("stockCode").asText())) {
+                    StockPrice stockPrice =
+                            objectMapper.convertValue(item, StockPrice.class);
+                    return Optional.of(stockPrice);
+                }
+            }
+
+            return Optional.empty();
+
         } catch (Exception e) {
             throw new InfrastructureException(InfrastructureErrorCode.REDIS_PARSE_ERROR);
         }
