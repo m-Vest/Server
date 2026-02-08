@@ -11,7 +11,6 @@ public class StockPrice {
     public StockPrice() {
     }
 
-    // 전체 필드 생성자
     public StockPrice(
             String stockCode,
             String stockName,

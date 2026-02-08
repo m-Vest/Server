@@ -14,14 +14,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AssetAppliedEventPayload implements EventPayload {
-
     private String orderId;
     private Long userId;
     private String stockCode;
     private OrderType orderType;
-
     private BigDecimal cashChange;
     private Integer stockQuantityChange;
-
     private LocalDateTime occurredAt;
 }
