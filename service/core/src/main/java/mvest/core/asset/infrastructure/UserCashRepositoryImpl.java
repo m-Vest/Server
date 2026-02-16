@@ -3,6 +3,8 @@ package mvest.core.asset.infrastructure;
 import lombok.RequiredArgsConstructor;
 import mvest.core.asset.application.UserCashRepository;
 import mvest.core.asset.domain.UserCash;
+import mvest.core.global.code.DomainErrorCode;
+import mvest.core.global.exception.DomainException;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -26,11 +28,17 @@ public class UserCashRepositoryImpl implements UserCashRepository {
 
     @Override
     public void increase(Long userId, BigDecimal amount) {
-        //TODO
+        UserCashEntity entity = userCashJpaRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(DomainErrorCode.ASSET_NOT_FOUND));
+
+        entity.increase(amount);
     }
 
     @Override
     public void decrease(Long userId, BigDecimal amount) {
-        //TODO
+        UserCashEntity entity = userCashJpaRepository.findById(userId)
+                .orElseThrow(() -> new DomainException(DomainErrorCode.ASSET_NOT_FOUND));
+
+        entity.decrease(amount);
     }
 }

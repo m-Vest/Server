@@ -1,10 +1,13 @@
 package mvest.core.asset.application;
 
 import lombok.RequiredArgsConstructor;
+import mvest.common.event.EventType;
 import mvest.common.event.payload.AssetChangeEventPayload;
 import mvest.common.event.payload.OrderType;
 import mvest.core.asset.domain.AssetTransaction;
 import mvest.core.asset.domain.UserCash;
+import mvest.core.global.exception.BusinessException;
+import mvest.core.global.exception.DomainException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,21 +41,41 @@ public class AssetCommandService {
             return;
         }
 
-        // 중복 이벤트 방어 (멱등성)
+        // 멱등성 방어
         if (assetTransactionRepository.existsByOrderId(payload.getOrderId())) {
             return;
         }
 
-        BigDecimal amount = payload.getPrice().multiply(BigDecimal.valueOf(payload.getQuantity()));
+        BigDecimal amount =
+                payload.getPrice().multiply(BigDecimal.valueOf(payload.getQuantity()));
 
-        if (payload.getOrderType() == OrderType.BUY) {
-            userCashRepository.decrease(payload.getUserId(), amount);
-            userStockRepository.increase(payload.getUserId(), payload.getStockCode(), payload.getQuantity());
-        } else if (payload.getOrderType() == OrderType.SELL) {
-            userCashRepository.increase(payload.getUserId(), amount);
-            userStockRepository.decrease(payload.getUserId(), payload.getStockCode(), payload.getQuantity());
+        try {
+
+            if (payload.getOrderType() == OrderType.BUY) {
+
+                userCashRepository.decrease(payload.getUserId(), amount);
+                userStockRepository.increase(
+                        payload.getUserId(),
+                        payload.getStockCode(),
+                        payload.getQuantity()
+                );
+
+            } else if (payload.getOrderType() == OrderType.SELL) {
+
+                userCashRepository.increase(payload.getUserId(), amount);
+                userStockRepository.decrease(
+                        payload.getUserId(),
+                        payload.getStockCode(),
+                        payload.getQuantity()
+                );
+            }
+
+            assetTransactionRepository.save(
+                    AssetTransaction.fromOrder(payload)
+            );
+
+        } catch (DomainException e) {
+            throw new DomainException(e.getErrorCode());
         }
-
-        assetTransactionRepository.save(AssetTransaction.fromOrder(payload));
     }
 }
