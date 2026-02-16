@@ -1,4 +1,4 @@
-package mvest.order.infrastructure;
+package mvest.core.order.infrastructure;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mvest.common.event.payload.OrderType;
-import mvest.order.domain.OrderStatus;
+import mvest.core.order.domain.OrderStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

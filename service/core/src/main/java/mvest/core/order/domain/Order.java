@@ -1,4 +1,4 @@
-package mvest.order.domain;
+package mvest.core.order.domain;
 
 import mvest.common.event.payload.OrderType;
 
@@ -86,9 +86,7 @@ public class Order {
                                OrderType orderType,
                                BigDecimal price,
                                int quantity,
-                               OrderStatus status,
-                               LocalDateTime createdAt,
-                               LocalDateTime updatedAt) {
+                               OrderStatus status) {
 
         return new Order(
                 null,
@@ -99,8 +97,8 @@ public class Order {
                 price,
                 quantity,
                 status,
-                createdAt,
-                updatedAt
+                null,
+                null
         );
     }
 }

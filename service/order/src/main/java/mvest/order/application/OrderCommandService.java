@@ -62,7 +62,9 @@ public class OrderCommandService {
                 orderType,
                 orderPrice,
                 payload.getQuantity(),
-                status
+                status,
+                payload.getOccurredAt(),
+                payload.getOccurredAt()
         );
 
         orderRepository.save(order);

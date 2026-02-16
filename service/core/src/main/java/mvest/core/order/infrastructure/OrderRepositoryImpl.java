@@ -1,12 +1,10 @@
-package mvest.order.infrastructure;
+package mvest.core.order.infrastructure;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import mvest.order.application.OrderRepository;
-import mvest.order.domain.Order;
+import mvest.core.order.application.OrderRepository;
+import mvest.core.order.domain.Order;
 import org.springframework.stereotype.Repository;
 
-@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
@@ -14,9 +12,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final OrderJpaRepository orderJpaRepository;
 
     @Override
-    public void save(Order order) {
-        log.info("Saving order with createdAt {}", order.getCreatedAt());
+    public Order save(Order order) {
         OrderEntity entity = OrderMapper.toEntity(order);
-        orderJpaRepository.save(entity);
+        OrderEntity savedEntity = orderJpaRepository.save(entity);
+        return OrderMapper.toDomain(savedEntity);
     }
 }
