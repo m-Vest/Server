@@ -27,6 +27,11 @@ public class StockPrice {
         this.changeRate = changeRate;
     }
 
+    public StockPrice(String stockCode, BigDecimal price) {
+        this.stockCode = stockCode;
+        this.price = price;
+    }
+
     public String getStockCode() {
         return stockCode;
     }
