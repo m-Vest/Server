@@ -2,9 +2,12 @@ package mvest.core.asset.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import mvest.core.asset.application.UserStockRepository;
+import mvest.core.asset.domain.UserStock;
 import mvest.core.global.code.DomainErrorCode;
 import mvest.core.global.exception.DomainException;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -52,5 +55,12 @@ public class UserStockRepositoryImpl implements UserStockRepository {
                 .findByUserIdAndStockCode(userId, stockCode)
                 .map(UserStockEntity::getQuantity)
                 .orElse(0);
+    }
+
+    public List<UserStock> findAllByUserId(Long userId) {
+        return userStockJpaRepository.findAllByUserId(userId)
+                .stream()
+                .map(UserStockMapper::toDomain)
+                .toList();
     }
 }

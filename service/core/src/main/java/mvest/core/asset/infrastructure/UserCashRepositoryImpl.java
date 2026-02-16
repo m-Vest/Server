@@ -43,10 +43,12 @@ public class UserCashRepositoryImpl implements UserCashRepository {
     }
 
     @Override
-    public BigDecimal findByUserId(Long userId) {
+    public UserCash findByUserId(Long userId) {
         UserCashEntity entity = userCashJpaRepository.findById(userId)
-                .orElseThrow(() -> new DomainException(DomainErrorCode.ASSET_NOT_FOUND));
+                .orElseThrow(() ->
+                        new DomainException(DomainErrorCode.ASSET_NOT_FOUND)
+                );
 
-        return entity.getBalance();
+        return UserCashMapper.toDomain(entity);
     }
 }

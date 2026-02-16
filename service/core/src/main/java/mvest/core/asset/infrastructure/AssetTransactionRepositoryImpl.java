@@ -5,6 +5,8 @@ import mvest.core.asset.application.AssetTransactionRepository;
 import mvest.core.asset.domain.AssetTransaction;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class AssetTransactionRepositoryImpl implements AssetTransactionRepository {
@@ -21,5 +23,13 @@ public class AssetTransactionRepositoryImpl implements AssetTransactionRepositor
     @Override
     public boolean existsByOrderId(String orderId) {
         return assetTransactionJpaRepository.existsByOrderId(orderId);
+    }
+
+    @Override
+    public List<AssetTransaction> findAllByUserId(Long userId) {
+        return assetTransactionJpaRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(AssetTransactionMapper::toDomain)
+                .toList();
     }
 }

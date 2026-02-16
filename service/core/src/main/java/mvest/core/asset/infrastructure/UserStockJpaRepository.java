@@ -2,6 +2,7 @@ package mvest.core.asset.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserStockJpaRepository extends JpaRepository<UserStockEntity, Long> {
@@ -9,4 +10,6 @@ public interface UserStockJpaRepository extends JpaRepository<UserStockEntity, L
     Optional<UserStockEntity> findByUserIdAndStockCode(Long userId, String stockCode);
 
     void deleteByUserIdAndStockCode(Long userId, String stockCode);
+
+    List<UserStockEntity> findAllByUserId(Long userId);
 }

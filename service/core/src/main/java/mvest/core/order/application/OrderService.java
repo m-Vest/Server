@@ -79,7 +79,7 @@ public class OrderService {
         if (orderCreateDTO.orderType().equals(OrderType.BUY)) {
 
             BigDecimal requiredAmount = orderCreateDTO.price().multiply(BigDecimal.valueOf(orderCreateDTO.quantity()));
-            BigDecimal currentBalance = userCashRepository.findByUserId(userId);
+            BigDecimal currentBalance = userCashRepository.findByUserId(userId).getBalance();
 
             if (currentBalance.compareTo(requiredAmount) < 0) {
                 throw new BusinessException(OrderErrorCode.INSUFFICIENT_BALANCE);
