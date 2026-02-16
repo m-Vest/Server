@@ -1,4 +1,4 @@
-package mvest.core.stock.domain;
+package mvest.order.stock.domain;
 
 import java.math.BigDecimal;
 

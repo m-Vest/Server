@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import mvest.common.event.payload.OrderType;
+import mvest.order.domain.OrderStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,15 +25,15 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_id", nullable = false, unique = true)
-    private Long orderId;
+    @Column(unique = true)
+    private String orderId;
 
     private Long userId;
     private String stockCode;
-    private String orderType;
+    private OrderType orderType;
     private BigDecimal price;
     private int quantity;
-    private String status;
+    private OrderStatus status;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -41,13 +43,13 @@ public class OrderEntity {
 
     @Builder
     public OrderEntity(Long id,
-                       Long orderId,
+                       String orderId,
                        Long userId,
                        String stockCode,
-                       String orderType,
+                       OrderType orderType,
                        BigDecimal price,
                        int quantity,
-                       String status) {
+                       OrderStatus status) {
         this.id = id;
         this.orderId = orderId;
         this.userId = userId;

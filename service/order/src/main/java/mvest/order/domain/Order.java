@@ -1,29 +1,31 @@
 package mvest.order.domain;
 
+import mvest.common.event.payload.OrderType;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Order {
 
     private final Long id;
-    private final Long orderId;
+    private final String orderId;
     private final Long userId;
     private final String stockCode;
-    private final String orderType;
+    private final OrderType orderType;
     private final BigDecimal price;
     private final int quantity;
-    private final String status;
+    private final OrderStatus status;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
     public Order(Long id,
-                 Long orderId,
+                 String orderId,
                  Long userId,
                  String stockCode,
-                 String orderType,
+                 OrderType orderType,
                  BigDecimal price,
                  int quantity,
-                 String status,
+                 OrderStatus status,
                  LocalDateTime createdAt,
                  LocalDateTime updatedAt) {
         this.id = id;
@@ -42,7 +44,7 @@ public class Order {
         return id;
     }
 
-    public Long getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
@@ -54,7 +56,7 @@ public class Order {
         return stockCode;
     }
 
-    public String getOrderType() {
+    public OrderType getOrderType() {
         return orderType;
     }
 
@@ -66,7 +68,7 @@ public class Order {
         return quantity;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
@@ -76,5 +78,29 @@ public class Order {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public static Order create(String orderId,
+                               Long userId,
+                               String stockCode,
+                               OrderType orderType,
+                               BigDecimal price,
+                               int quantity,
+                               OrderStatus status) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        return new Order(
+                null,
+                orderId,
+                userId,
+                stockCode,
+                orderType,
+                price,
+                quantity,
+                status,
+                now,
+                now
+        );
     }
 }

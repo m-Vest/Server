@@ -3,7 +3,6 @@ package mvest.core.asset.application;
 import lombok.RequiredArgsConstructor;
 import mvest.common.event.payload.AssetChangeEventPayload;
 import mvest.common.event.payload.OrderType;
-import mvest.common.outboxmessagerelay.OutboxEventPublisher;
 import mvest.core.asset.domain.AssetTransaction;
 import mvest.core.asset.domain.UserCash;
 import org.springframework.stereotype.Service;

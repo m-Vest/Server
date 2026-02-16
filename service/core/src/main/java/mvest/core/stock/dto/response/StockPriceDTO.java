@@ -2,10 +2,12 @@ package mvest.core.stock.dto.response;
 
 import mvest.core.stock.domain.StockPrice;
 
+import java.math.BigDecimal;
+
 public record StockPriceDTO(
         String stockCode,
         String stockName,
-        long price,
+        BigDecimal price,
         long change,
         double changeRate
 ) {

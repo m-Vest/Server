@@ -75,7 +75,7 @@ public class StockPriceOpenApiClient {
                     result.add(new StockPrice(
                             item.get("cd").asText(),  // 종목 코드
                             item.get("nm").asText(),  // 종목명
-                            item.get("nv").asLong(),  // 현재가
+                            item.get("nv").decimalValue(),  // 현재가
                             item.get("cv").asLong(),  // 전일 대비
                             item.get("cr").asDouble() // 등락률
                     ));
