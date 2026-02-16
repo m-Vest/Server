@@ -21,7 +21,6 @@ public class AssetCommandService {
     private final OutboxEventPublisher outboxEventPublisher;
 
     public void applyAssetChange(AssetChangeEventPayload payload) {
-
         // 중복 이벤트 방어 (멱등성)
         if (assetTransactionRepository.existsByOrderId(payload.getOrderId())) {
             return;
@@ -32,7 +31,7 @@ public class AssetCommandService {
         if (payload.getOrderType() == OrderType.BUY) {
             userCashRepository.decrease(payload.getUserId(), amount);
             userStockRepository.increase(payload.getUserId(), payload.getStockCode(), payload.getQuantity());
-        } else {
+        } else if (payload.getOrderType() == OrderType.SELL) {
             userCashRepository.increase(payload.getUserId(), amount);
             userStockRepository.decrease(payload.getUserId(), payload.getStockCode(), payload.getQuantity());
         }

@@ -1,8 +1,9 @@
 package mvest.order.application;
 
 import lombok.RequiredArgsConstructor;
-import mvest.common.event.payload.OrderSubmittedEventPayload;
-import mvest.common.event.payload.OrderType;
+import mvest.common.event.EventType;
+import mvest.common.event.payload.*;
+import mvest.common.outboxmessagerelay.OutboxEventPublisher;
 import mvest.order.domain.Order;
 import mvest.order.domain.OrderStatus;
 import mvest.order.global.code.StockErrorCode;
@@ -21,6 +22,7 @@ public class OrderCommandService {
 
     private final StockRepository stockRepository;
     private final OrderRepository orderRepository;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     public void executeOrder(OrderSubmittedEventPayload payload) {
 
@@ -68,5 +70,50 @@ public class OrderCommandService {
         );
 
         orderRepository.save(order);
+
+        if (order.getStatus().equals(OrderStatus.EXECUTED)) {
+
+            // Order → Core
+            outboxEventPublisher.publish(
+                    EventType.ORDER_EXECUTED,
+                    OrderExecutedEventPayload.builder()
+                            .orderId(order.getOrderId())
+                            .userId(order.getUserId())
+                            .stockCode(order.getStockCode())
+                            .orderType(order.getOrderType())
+                            .executedPrice(order.getPrice())
+                            .executedQuantity(order.getQuantity())
+                            .occurredAt(order.getCreatedAt())
+                            .build()
+            );
+
+            // Order → Asset
+            outboxEventPublisher.publish(
+                    EventType.APPLY_ASSET_CHANGE,
+                    AssetChangeEventPayload.builder()
+                            .orderId(order.getOrderId())
+                            .userId(order.getUserId())
+                            .stockCode(order.getStockCode())
+                            .orderType(order.getOrderType())
+                            .price(order.getPrice())
+                            .quantity(order.getQuantity())
+                            .occurredAt(order.getCreatedAt())
+                            .build()
+            );
+        }
+
+        if (order.getStatus().equals(OrderStatus.REJECTED)) {
+
+            // Order → Core
+            outboxEventPublisher.publish(
+                    EventType.ORDER_REJECTED,
+                    OrderRejectedEventPayload.builder()
+                            .orderId(order.getOrderId())
+                            .userId(order.getUserId())
+                            .reason("주문 유형이 올바르지 않습니다.")
+                            .occurredAt(order.getCreatedAt())
+                            .build()
+            );
+        }
     }
 }
