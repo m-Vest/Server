@@ -2,6 +2,8 @@ package mvest.asset.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import mvest.asset.application.UserStockRepository;
+import mvest.asset.global.code.DomainErrorCode;
+import mvest.asset.global.exception.DomainException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -12,11 +14,35 @@ public class UserStockRepositoryImpl implements UserStockRepository {
 
     @Override
     public void increase(Long userId, String stockCode, Integer quantity) {
-        //TODO
+
+        UserStockEntity entity = userStockJpaRepository
+                .findByUserIdAndStockCode(userId, stockCode)
+                .orElse(null);
+
+        if (entity == null) {
+            userStockJpaRepository.save(
+                    UserStockEntity.builder()
+                            .userId(userId)
+                            .stockCode(stockCode)
+                            .quantity(quantity)
+                            .build()
+            );
+        } else {
+            entity.increase(quantity);
+        }
     }
 
     @Override
     public void decrease(Long userId, String stockCode, Integer quantity) {
-        //TODO
+
+        UserStockEntity entity = userStockJpaRepository
+                .findByUserIdAndStockCode(userId, stockCode)
+                .orElseThrow(() -> new DomainException(DomainErrorCode.ASSET_NOT_FOUND));
+
+        entity.decrease(quantity);
+
+        if (entity.getQuantity() == 0) {
+            userStockJpaRepository.delete(entity);
+        }
     }
 }

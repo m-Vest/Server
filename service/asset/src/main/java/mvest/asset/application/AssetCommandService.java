@@ -2,6 +2,8 @@ package mvest.asset.application;
 
 import lombok.RequiredArgsConstructor;
 import mvest.asset.domain.AssetTransaction;
+import mvest.asset.global.exception.BusinessException;
+import mvest.asset.global.exception.DomainException;
 import mvest.common.event.payload.AssetChangeEventPayload;
 import mvest.common.event.payload.OrderType;
 import mvest.common.outboxmessagerelay.OutboxEventPublisher;
@@ -21,21 +23,42 @@ public class AssetCommandService {
     private final OutboxEventPublisher outboxEventPublisher;
 
     public void applyAssetChange(AssetChangeEventPayload payload) {
-        // 중복 이벤트 방어 (멱등성)
+
+        // 멱등성 방어
         if (assetTransactionRepository.existsByOrderId(payload.getOrderId())) {
             return;
         }
 
-        BigDecimal amount = payload.getPrice().multiply(BigDecimal.valueOf(payload.getQuantity()));
+        BigDecimal amount =
+                payload.getPrice().multiply(BigDecimal.valueOf(payload.getQuantity()));
 
-        if (payload.getOrderType() == OrderType.BUY) {
-            userCashRepository.decrease(payload.getUserId(), amount);
-            userStockRepository.increase(payload.getUserId(), payload.getStockCode(), payload.getQuantity());
-        } else if (payload.getOrderType() == OrderType.SELL) {
-            userCashRepository.increase(payload.getUserId(), amount);
-            userStockRepository.decrease(payload.getUserId(), payload.getStockCode(), payload.getQuantity());
+        try {
+
+            if (payload.getOrderType() == OrderType.BUY) {
+
+                userCashRepository.decrease(payload.getUserId(), amount);
+                userStockRepository.increase(
+                        payload.getUserId(),
+                        payload.getStockCode(),
+                        payload.getQuantity()
+                );
+
+            } else if (payload.getOrderType() == OrderType.SELL) {
+
+                userCashRepository.increase(payload.getUserId(), amount);
+                userStockRepository.decrease(
+                        payload.getUserId(),
+                        payload.getStockCode(),
+                        payload.getQuantity()
+                );
+            }
+
+            assetTransactionRepository.save(
+                    AssetTransaction.fromOrder(payload)
+            );
+
+        } catch (DomainException e) {
+            throw new BusinessException(e.getErrorCode());
         }
-
-        assetTransactionRepository.save(AssetTransaction.fromOrder(payload));
     }
 }

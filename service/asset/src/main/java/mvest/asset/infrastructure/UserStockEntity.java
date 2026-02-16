@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import mvest.asset.global.code.DomainErrorCode;
+import mvest.asset.global.exception.DomainException;
 
 @Entity
 @Getter
@@ -34,5 +36,17 @@ public class UserStockEntity {
         this.userId = userId;
         this.stockCode = stockCode;
         this.quantity = quantity;
+    }
+
+    public void increase(int quantity) {
+        this.quantity += quantity;
+    }
+
+    public void decrease(int quantity) {
+        int newQuantity = this.quantity - quantity;
+        if (newQuantity < 0) {
+            throw new DomainException(DomainErrorCode.INSUFFICIENT_BALANCE);
+        }
+        this.quantity = newQuantity;
     }
 }
