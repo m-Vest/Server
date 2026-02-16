@@ -45,4 +45,12 @@ public class UserStockRepositoryImpl implements UserStockRepository {
             userStockJpaRepository.delete(entity);
         }
     }
+
+    @Override
+    public Integer findByUserIdAndStockCode(Long userId, String stockCode) {
+        return userStockJpaRepository
+                .findByUserIdAndStockCode(userId, stockCode)
+                .map(UserStockEntity::getQuantity)
+                .orElse(0);
+    }
 }

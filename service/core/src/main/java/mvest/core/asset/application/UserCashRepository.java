@@ -9,4 +9,5 @@ public interface UserCashRepository {
     boolean existsByUserId(Long userId);
     void increase(Long userId, BigDecimal amount);
     void decrease(Long userId, BigDecimal amount);
+    BigDecimal findByUserId(Long userId);
 }
