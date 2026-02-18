@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,7 +30,13 @@ public class StockPriceRedisRepository {
             );
 
             redisTemplate.opsForValue()
-                    .set(KEY, objectMapper.writeValueAsString(payload));
+                    .set(
+                            KEY,
+                            objectMapper.writeValueAsString(payload),
+                            1,
+                            TimeUnit.HOURS   // Physical TTL 1시간
+                    );
+
         } catch (Exception e) {
             throw new InfrastructureException(InfrastructureErrorCode.REDIS_SAVE_ERROR);
         }

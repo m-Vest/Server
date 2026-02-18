@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 import mvest.core.global.code.InfrastructureErrorCode;
 import mvest.core.global.exception.InfrastructureException;
 import mvest.core.stock.application.StockRepository;
+import mvest.core.stock.domain.StockDataStatus;
 import mvest.core.stock.domain.StockPrice;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +73,35 @@ public class StockRepositoryImpl implements StockRepository {
             }
 
             return Optional.empty();
+
+        } catch (Exception e) {
+            throw new InfrastructureException(InfrastructureErrorCode.REDIS_PARSE_ERROR);
+        }
+    }
+
+    public StockDataStatus getDataStatus() {
+        String data = stockPriceRedisRepository.findAllRaw();
+
+        if (data == null) {
+            return StockDataStatus.DELAYED;
+        }
+
+        try {
+            JsonNode root = objectMapper.readTree(data);
+            JsonNode updatedAtNode = root.get("updatedAt");
+
+            if (updatedAtNode == null) {
+                return StockDataStatus.DELAYED;
+            }
+
+            LocalDateTime updatedAt = LocalDateTime.parse(updatedAtNode.asText());
+            Duration duration = Duration.between(updatedAt, LocalDateTime.now());
+
+            if (duration.toMinutes() >= 10) {
+                return StockDataStatus.DELAYED;
+            }
+
+            return StockDataStatus.NORMAL;
 
         } catch (Exception e) {
             throw new InfrastructureException(InfrastructureErrorCode.REDIS_PARSE_ERROR);

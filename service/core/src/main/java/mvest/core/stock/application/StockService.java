@@ -3,9 +3,11 @@ package mvest.core.stock.application;
 import lombok.RequiredArgsConstructor;
 import mvest.core.global.code.StockErrorCode;
 import mvest.core.global.exception.BusinessException;
+import mvest.core.stock.domain.StockDataStatus;
 import mvest.core.stock.domain.StockPrice;
 import mvest.core.stock.dto.response.StockPriceDTO;
 import mvest.core.stock.dto.response.StockPriceListDTO;
+import mvest.core.stock.infrastructure.StockRepositoryImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,10 +26,14 @@ public class StockService {
             throw new BusinessException(StockErrorCode.STOCK_LIST_NOT_FOUND);
         }
 
+        StockDataStatus status =
+                ((StockRepositoryImpl) stockRepository).getDataStatus();
+
         return StockPriceListDTO.of(
                 stockPriceList.stream()
-                        .map(StockPriceDTO::from)
-                        .toList()
+                        .map(stock -> StockPriceDTO.from(stock, status))
+                        .toList(),
+                status
         );
     }
 
@@ -38,6 +44,9 @@ public class StockService {
                         new BusinessException(StockErrorCode.STOCK_NOT_FOUND)
                 );
 
-        return StockPriceDTO.from(stockPrice);
+        StockDataStatus status =
+                ((StockRepositoryImpl) stockRepository).getDataStatus();
+
+        return StockPriceDTO.from(stockPrice, status);
     }
 }
