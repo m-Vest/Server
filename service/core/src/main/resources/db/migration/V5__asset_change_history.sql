@@ -1,4 +1,4 @@
-CREATE TABLE asset_transactions (
+CREATE TABLE IF NOT EXISTS asset_transactions (
     id BIGINT NOT NULL AUTO_INCREMENT,
     order_id BIGINT,
     user_id BIGINT,

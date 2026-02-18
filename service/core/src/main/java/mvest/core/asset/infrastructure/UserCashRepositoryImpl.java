@@ -8,6 +8,7 @@ import mvest.core.global.exception.DomainException;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -50,5 +51,10 @@ public class UserCashRepositoryImpl implements UserCashRepository {
                 );
 
         return UserCashMapper.toDomain(entity);
+    }
+
+    @Override
+    public List<Long> findAllUserIds() {
+        return userCashJpaRepository.findAllUserIds();
     }
 }

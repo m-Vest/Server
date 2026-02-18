@@ -1,4 +1,4 @@
-CREATE TABLE user_cash (
+CREATE TABLE IF NOT EXISTS user_cash (
     user_id BIGINT NOT NULL,
     balance DECIMAL(19, 4),
     updated_at DATETIME,

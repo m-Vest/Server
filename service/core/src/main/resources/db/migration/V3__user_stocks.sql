@@ -1,4 +1,4 @@
-CREATE TABLE user_stocks (
+CREATE TABLE IF NOT EXISTS user_stocks (
     id BIGINT NOT NULL AUTO_INCREMENT,
     user_id BIGINT,
     stock_code VARCHAR(255),
