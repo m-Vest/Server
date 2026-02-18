@@ -13,6 +13,7 @@ public class AssetDailySnapshot {
     private final BigDecimal cashAmount;
     private final BigDecimal stockEvaluationAmount;
     private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
     public AssetDailySnapshot(
             Long id,
@@ -21,7 +22,8 @@ public class AssetDailySnapshot {
             BigDecimal totalAsset,
             BigDecimal cashAmount,
             BigDecimal stockEvaluationAmount,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
     ) {
         this.id = id;
         this.userId = userId;
@@ -30,6 +32,7 @@ public class AssetDailySnapshot {
         this.cashAmount = cashAmount;
         this.stockEvaluationAmount = stockEvaluationAmount;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() { return id; }
@@ -39,4 +42,22 @@ public class AssetDailySnapshot {
     public BigDecimal getCashAmount() { return cashAmount; }
     public BigDecimal getStockEvaluationAmount() { return stockEvaluationAmount; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public AssetDailySnapshot update(
+            BigDecimal totalAsset,
+            BigDecimal cashAmount,
+            BigDecimal stockEvaluationAmount
+    ) {
+        return new AssetDailySnapshot(
+                this.id,
+                this.userId,
+                this.snapshotDate,
+                totalAsset,
+                cashAmount,
+                stockEvaluationAmount,
+                this.createdAt,
+                LocalDateTime.now()
+        );
+    }
 }

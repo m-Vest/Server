@@ -3,13 +3,11 @@ package mvest.core.asset.application;
 import lombok.RequiredArgsConstructor;
 import mvest.common.event.Event;
 import mvest.common.event.EventPayload;
+import mvest.core.asset.domain.AssetDailySnapshot;
 import mvest.core.asset.domain.AssetTransaction;
 import mvest.core.asset.domain.UserCash;
 import mvest.core.asset.domain.UserStock;
-import mvest.core.asset.dto.response.UserAssetDTO;
-import mvest.core.asset.dto.response.UserAssetTransactionDTO;
-import mvest.core.asset.dto.response.UserAssetTransactionItemDTO;
-import mvest.core.asset.dto.response.UserStockDTO;
+import mvest.core.asset.dto.response.*;
 import mvest.core.stock.application.StockService;
 import org.springframework.stereotype.Service;
 import mvest.core.asset.application.handler.EventHandler;
@@ -26,6 +24,7 @@ public class AssetService {
     private final UserCashRepository userCashRepository;
     private final UserStockRepository userStockRepository;
     private final AssetTransactionRepository assetTransactionRepository;
+    private final AssetDailySnapshotRepository assetDailySnapshotRepository;
     private final StockService stockService;
 
     public void handleEvent(Event<EventPayload> event) {
@@ -165,5 +164,21 @@ public class AssetService {
                 userId,
                 transactions
         );
+    }
+
+    public UserAssetSnapshotDTO getUserAssetSnapshot(Long userId) {
+
+        List<AssetDailySnapshot> snapshots = assetDailySnapshotRepository.findAllByUserId(userId);
+
+        List<AssetDailySnapshotDTO> snapshotDTOs = snapshots.stream()
+                .map(snapshot -> new AssetDailySnapshotDTO(
+                        snapshot.getSnapshotDate(),
+                        snapshot.getTotalAsset(),
+                        snapshot.getCashAmount(),
+                        snapshot.getStockEvaluationAmount()
+                ))
+                .toList();
+
+        return new UserAssetSnapshotDTO(userId, snapshotDTOs);
     }
 }

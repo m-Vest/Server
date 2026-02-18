@@ -3,6 +3,7 @@ package mvest.core.asset.controller;
 import lombok.RequiredArgsConstructor;
 import mvest.core.asset.application.AssetService;
 import mvest.core.asset.dto.response.UserAssetDTO;
+import mvest.core.asset.dto.response.UserAssetSnapshotDTO;
 import mvest.core.asset.dto.response.UserAssetTransactionDTO;
 import mvest.core.global.code.CommonSuccessCode;
 import mvest.core.global.dto.ResponseDTO;
@@ -29,5 +30,13 @@ public class AssetController {
     ) {
         Long userId = 1L;
         return ResponseDTO.success(CommonSuccessCode.OK, assetService.getUserAssetTransaction(userId));
+    }
+
+    @GetMapping("/snapshot")
+    public ResponseDTO<UserAssetSnapshotDTO> getUserAssetSnapshot(
+            // @UserId Long userId
+    ) {
+        Long userId = 1L;
+        return ResponseDTO.success(CommonSuccessCode.OK, assetService.getUserAssetSnapshot(userId));
     }
 }
