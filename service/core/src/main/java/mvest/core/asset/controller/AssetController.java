@@ -5,6 +5,7 @@ import mvest.core.asset.application.AssetService;
 import mvest.core.asset.dto.response.UserAssetDTO;
 import mvest.core.asset.dto.response.UserAssetSnapshotDTO;
 import mvest.core.asset.dto.response.UserAssetTransactionDTO;
+import mvest.core.auth.annotation.UserId;
 import mvest.core.global.code.CommonSuccessCode;
 import mvest.core.global.dto.ResponseDTO;
 import org.springframework.web.bind.annotation.*;
@@ -18,25 +19,22 @@ public class AssetController {
 
     @GetMapping
     public ResponseDTO<UserAssetDTO> getUserAsset(
-            // @UserId Long userId
+            @UserId Long userId
     ) {
-        Long userId = 1L;
         return ResponseDTO.success(CommonSuccessCode.OK, assetService.getUserAsset(userId));
     }
 
     @GetMapping("/transactions")
     public ResponseDTO<UserAssetTransactionDTO> getUserAssetTransaction(
-            // @UserId Long userId
+            @UserId Long userId
     ) {
-        Long userId = 1L;
         return ResponseDTO.success(CommonSuccessCode.OK, assetService.getUserAssetTransaction(userId));
     }
 
     @GetMapping("/snapshot")
     public ResponseDTO<UserAssetSnapshotDTO> getUserAssetSnapshot(
-            // @UserId Long userId
+            @UserId Long userId
     ) {
-        Long userId = 1L;
         return ResponseDTO.success(CommonSuccessCode.OK, assetService.getUserAssetSnapshot(userId));
     }
 }

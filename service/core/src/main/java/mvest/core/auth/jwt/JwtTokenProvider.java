@@ -22,6 +22,8 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider implements InitializingBean {
 
+    private static final String ANONYMOUS_USER = "anonymous";
+
     @Value("${jwt.user.access_token_expiration_time}")
     private Long accessTokenExpirationTime;
 
@@ -122,5 +124,12 @@ public class JwtTokenProvider implements InitializingBean {
                 Long.valueOf(claims.get(AuthConstant.USER_ID).toString()),
                 tokenType
         );
+    }
+
+    public static Object validatePrincipal(final Object principal) {
+        if (ANONYMOUS_USER.equals(principal)) {
+            throw new AuthException(AuthErrorCode.UNAUTHORIZED);
+        }
+        return principal;
     }
 }

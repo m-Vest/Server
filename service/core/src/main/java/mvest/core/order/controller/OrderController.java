@@ -19,10 +19,9 @@ public class OrderController {
 
     @PostMapping("/create")
     public ResponseDTO<OrderCreatedDTO> createOrder(
-            @Valid @RequestBody OrderCreateDTO orderCreateDTO
-            // @UserId Long userId
+            @Valid @RequestBody OrderCreateDTO orderCreateDTO,
+            @UserId Long userId
     ) {
-        Long userId = 1L;
         return ResponseDTO.success(CommonSuccessCode.CREATED, orderService.createOrder(orderCreateDTO, userId));
     }
 }
