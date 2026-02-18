@@ -7,7 +7,6 @@ import mvest.core.stock.domain.StockDataStatus;
 import mvest.core.stock.domain.StockPrice;
 import mvest.core.stock.dto.response.StockPriceDTO;
 import mvest.core.stock.dto.response.StockPriceListDTO;
-import mvest.core.stock.infrastructure.StockRepositoryImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +25,7 @@ public class StockService {
             throw new BusinessException(StockErrorCode.STOCK_LIST_NOT_FOUND);
         }
 
-        StockDataStatus status =
-                ((StockRepositoryImpl) stockRepository).getDataStatus();
+        StockDataStatus status = stockRepository.getDataStatus();
 
         return StockPriceListDTO.of(
                 stockPriceList.stream()
@@ -44,8 +42,7 @@ public class StockService {
                         new BusinessException(StockErrorCode.STOCK_NOT_FOUND)
                 );
 
-        StockDataStatus status =
-                ((StockRepositoryImpl) stockRepository).getDataStatus();
+        StockDataStatus status = stockRepository.getDataStatus();
 
         return StockPriceDTO.from(stockPrice, status);
     }

@@ -25,6 +25,7 @@ public class StockRepositoryImpl implements StockRepository {
 
     @Override
     public List<StockPrice> findAll() {
+
         String data = stockPriceRedisRepository.findAllRaw();
 
         if (data == null) {
@@ -43,6 +44,7 @@ public class StockRepositoryImpl implements StockRepository {
                     pricesNode,
                     new TypeReference<List<StockPrice>>() {}
             );
+
         } catch (Exception e) {
             throw new InfrastructureException(InfrastructureErrorCode.REDIS_PARSE_ERROR);
         }
@@ -50,6 +52,7 @@ public class StockRepositoryImpl implements StockRepository {
 
     @Override
     public Optional<StockPrice> findByStockCode(String stockCode) {
+
         String data = stockPriceRedisRepository.findAllRaw();
 
         if (data == null) {
@@ -79,7 +82,9 @@ public class StockRepositoryImpl implements StockRepository {
         }
     }
 
+    @Override
     public StockDataStatus getDataStatus() {
+
         String data = stockPriceRedisRepository.findAllRaw();
 
         if (data == null) {
@@ -94,8 +99,11 @@ public class StockRepositoryImpl implements StockRepository {
                 return StockDataStatus.DELAYED;
             }
 
-            LocalDateTime updatedAt = LocalDateTime.parse(updatedAtNode.asText());
-            Duration duration = Duration.between(updatedAt, LocalDateTime.now());
+            LocalDateTime updatedAt =
+                    LocalDateTime.parse(updatedAtNode.asText());
+
+            Duration duration =
+                    Duration.between(updatedAt, LocalDateTime.now());
 
             if (duration.toMinutes() >= 10) {
                 return StockDataStatus.DELAYED;

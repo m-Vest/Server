@@ -4,7 +4,6 @@ import mvest.core.stock.domain.StockDataStatus;
 import mvest.core.stock.domain.StockPrice;
 import mvest.core.stock.dto.response.StockPriceDTO;
 import mvest.core.stock.dto.response.StockPriceListDTO;
-import mvest.core.stock.infrastructure.StockRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,7 @@ import static org.mockito.BDDMockito.given;
 class StockServiceTest {
 
     @Mock
-    private StockRepositoryImpl stockRepository;
+    private StockRepository stockRepository;
 
     @InjectMocks
     private StockService stockService;
@@ -46,6 +45,7 @@ class StockServiceTest {
 
         given(stockRepository.findByStockCode("005930"))
                 .willReturn(Optional.of(stock));
+
         given(stockRepository.getDataStatus())
                 .willReturn(StockDataStatus.NORMAL);
 
@@ -53,7 +53,8 @@ class StockServiceTest {
         StockPriceDTO response = stockService.getStockPrice("005930");
 
         // then
-        assertThat(response.dataStatus()).isEqualTo(StockDataStatus.NORMAL);
+        assertThat(response.dataStatus())
+                .isEqualTo(StockDataStatus.NORMAL);
     }
 
     @Test
@@ -64,6 +65,7 @@ class StockServiceTest {
 
         given(stockRepository.findByStockCode("005930"))
                 .willReturn(Optional.of(stock));
+
         given(stockRepository.getDataStatus())
                 .willReturn(StockDataStatus.DELAYED);
 
@@ -71,7 +73,8 @@ class StockServiceTest {
         StockPriceDTO response = stockService.getStockPrice("005930");
 
         // then
-        assertThat(response.dataStatus()).isEqualTo(StockDataStatus.DELAYED);
+        assertThat(response.dataStatus())
+                .isEqualTo(StockDataStatus.DELAYED);
     }
 
     @Test
@@ -82,6 +85,7 @@ class StockServiceTest {
 
         given(stockRepository.findAll())
                 .willReturn(List.of(stock));
+
         given(stockRepository.getDataStatus())
                 .willReturn(StockDataStatus.NORMAL);
 
@@ -89,8 +93,12 @@ class StockServiceTest {
         StockPriceListDTO response = stockService.getAllStockPrices();
 
         // then
-        assertThat(response.dataStatus()).isEqualTo(StockDataStatus.NORMAL);
+        assertThat(response.dataStatus())
+                .isEqualTo(StockDataStatus.NORMAL);
+
         assertThat(response.stockPriceDtoList())
-                .allMatch(dto -> dto.dataStatus() == StockDataStatus.NORMAL);
+                .allMatch(dto ->
+                        dto.dataStatus() == StockDataStatus.NORMAL
+                );
     }
 }
