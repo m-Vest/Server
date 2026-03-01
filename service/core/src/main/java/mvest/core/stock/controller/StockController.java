@@ -1,9 +1,11 @@
 package mvest.core.stock.controller;
 
 import lombok.RequiredArgsConstructor;
+import mvest.core.auth.annotation.UserId;
 import mvest.core.stock.application.StockService;
 import mvest.core.stock.dto.response.StockPriceDTO;
 import mvest.core.stock.dto.response.StockPriceListDTO;
+import mvest.core.stock.dto.response.StockTradingInfoDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,5 +29,13 @@ public class StockController {
             @PathVariable String stockCode
     ) {
         return ResponseEntity.ok(stockService.getStockPrice(stockCode));
+    }
+
+    @GetMapping("/{stockCode}/tradeInfo")
+    public ResponseEntity<StockTradingInfoDTO> getStockTradingInfo(
+            @UserId Long userId,
+            @PathVariable String stockCode
+    ) {
+        return ResponseEntity.ok(stockService.getStockTradingInfo(userId, stockCode));
     }
 }
