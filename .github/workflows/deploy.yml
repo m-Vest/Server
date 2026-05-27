@@ -75,12 +75,12 @@ jobs:
           docker build -t $ECR_REGISTRY/mvest-asset:latest service/asset
           docker push $ECR_REGISTRY/mvest-asset:latest
 
-      # 4. AWS에서 기존 태스크 정의(설계도) 다운로드 후 필요한 taskDefinition만 추출
+      # 4. AWS에서 기존 태스크 정의(설계도) 다운로드
       - name: Download active task definitions
         run: |
-          aws ecs describe-task-definition --task-definition mvest-core-task --query taskDefinition > task-definition-core.json
-          aws ecs describe-task-definition --task-definition mvest-order-task --query taskDefinition > task-definition-order.json
-          aws ecs describe-task-definition --task-definition mvest-asset-task --query taskDefinition > task-definition-asset.json
+          aws ecs describe-task-definition --task-definition mvest-core:latest --query taskDefinition > task-definition-core.json
+          aws ecs describe-task-definition --task-definition mvest-order:latest --query taskDefinition > task-definition-order.json
+          aws ecs describe-task-definition --task-definition mvest-asset:latest --query taskDefinition > task-definition-asset.json
 
       # 5. 다운로드한 설계도의 이미지 주소를 방금 만든 신규 이미지로 교체
       - name: Render Amazon ECS task definitions
@@ -102,12 +102,12 @@ jobs:
         run: |
           # Core 배포
           aws ecs register-task-definition --cli-input-json file://task-definition-core.json
-          aws ecs update-service --cluster mvest-cluster --service mvest-core-service --task-definition mvest-core-task --force-new-deployment
+          aws ecs update-service --cluster mvest-cluster --service mvest-core-service --task-definition mvest-core --force-new-deployment
           
           # Order 배포
           aws ecs register-task-definition --cli-input-json file://task-definition-order.json
-          aws ecs update-service --cluster mvest-cluster --service mvest-order-service --task-definition mvest-order-task --force-new-deployment
+          aws ecs update-service --cluster mvest-cluster --service mvest-order-service --task-definition mvest-order --force-new-deployment
           
           # Asset 배포
           aws ecs register-task-definition --cli-input-json file://task-definition-asset.json
-          aws ecs update-service --cluster mvest-cluster --service mvest-asset-service --task-definition mvest-asset-task --force-new-deployment
+          aws ecs update-service --cluster mvest-cluster --service mvest-asset-service --task-definition mvest-asset --force-new-deployment
