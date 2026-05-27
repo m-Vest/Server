@@ -45,13 +45,13 @@ jobs:
           ./gradlew :service:order:bootJar -x test
           ./gradlew :service:asset:bootJar -x test
 
-      # 1. AWS 자격 증명 설정 (IAM User 기반 또는 OIDC 권장)
+      # 1. AWS 자격 증명 설정
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }} # 예: ap-northeast-2
+          aws-region: ${{ secrets.AWS_REGION }}
 
       # 2. AWS ECR 로그인
       - name: Login to Amazon ECR
@@ -75,7 +75,7 @@ jobs:
           docker build -t $ECR_REGISTRY/mvest-asset:latest service/asset
           docker push $ECR_REGISTRY/mvest-asset:latest
 
-      # 4. AWS에서 기존 태스크 정의(설계도) 다운로드
+      # 4. AWS에서 기존 태스크 정의(설계도) 다운로드 후 필요한 taskDefinition만 추출
       - name: Download active task definitions
         run: |
           aws ecs describe-task-definition --task-definition mvest-core-task --query taskDefinition > task-definition-core.json
@@ -83,19 +83,32 @@ jobs:
           aws ecs describe-task-definition --task-definition mvest-asset-task --query taskDefinition > task-definition-asset.json
 
       # 5. 다운로드한 설계도의 이미지 주소를 방금 만든 신규 이미지로 교체
+      # (AWS CLI로 재등록할 때 방해가 되는 불필요한 메타데이터 필드들도 함께 청소)
       - name: Render Amazon ECS task definitions
-        id: render-tasks
         env:
-          REGISTRY: ${{ steps.build-image.outputs.registry }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          # 각 json 파일 내부의 이미지 경로를 새 ECR 이미지로 업데이트
+          # 이미지 주소 업데이트
           sed -i "s|\"image\": \".*mvest-core.*\"|\"image\": \"$REGISTRY/mvest-core:latest\"|g" task-definition-core.json
-          sed -i "s|\"image\": \".*mvest-order.*\"|\"image\": \"$REGISTRY/mvest-order:latest\"|g" task-definition-order.json
-          sed -i "s|\"image\": \".*mvest-asset.*\"|\"image\": \"$REGISTRY/mvest-asset.*\"|\"image\": \"$REGISTRY/mvest-asset:latest\"|g" task-definition-asset.json
+          sed -i "s|\"image\": \".*mvest-order.*\"|\"image\": \"$REGISTRY/mvest-order:latest\"|g" task-definition-core.json
+          sed -i "s|\"image\": \".*mvest-asset.*\"|\"image\": \"$REGISTRY/mvest-asset:latest\"|g" task-definition-asset.json
+          
+          # AWS 재등록 시 에러를 유발하는 읽기 전용 필드들 삭제
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition-core.json > temp-core.json && mv temp-core.json task-definition-core.json
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition-order.json > temp-order.json && mv temp-order.json task-definition-order.json
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition-asset.json > temp-asset.json && mv temp-asset.json task-definition-asset.json
 
-      # 6. 최종 수정된 설계도를 ECS에 배포하고 서비스 실시간 재시작 명령
+      # 6. 새로 만들어진 json 설계도를 AWS에 정식 등록
       - name: Deploy Amazon ECS task definitions
         run: |
+          # Core 배포
+          aws ecs register-task-definition --cli-input-json file://task-definition-core.json
           aws ecs update-service --cluster mvest-cluster --service mvest-core-service --task-definition mvest-core-task --force-new-deployment
+          
+          # Order 배포
+          aws ecs register-task-definition --cli-input-json file://task-definition-order.json
           aws ecs update-service --cluster mvest-cluster --service mvest-order-service --task-definition mvest-order-task --force-new-deployment
+          
+          # Asset 배포
+          aws ecs register-task-definition --cli-input-json file://task-definition-asset.json
           aws ecs update-service --cluster mvest-cluster --service mvest-asset-service --task-definition mvest-asset-task --force-new-deployment
