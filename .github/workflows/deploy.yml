@@ -78,9 +78,9 @@ jobs:
       # 4. AWS에서 기존 태스크 정의(설계도) 다운로드
       - name: Download active task definitions
         run: |
-          aws ecs describe-task-definition --task-definition mvest-core:latest --query taskDefinition > task-definition-core.json
-          aws ecs describe-task-definition --task-definition mvest-order:latest --query taskDefinition > task-definition-order.json
-          aws ecs describe-task-definition --task-definition mvest-asset:latest --query taskDefinition > task-definition-asset.json
+          aws ecs describe-task-definition --task-definition mvest-core --query taskDefinition > task-definition-core.json
+          aws ecs describe-task-definition --task-definition mvest-order --query taskDefinition > task-definition-order.json
+          aws ecs describe-task-definition --task-definition mvest-asset --query taskDefinition > task-definition-asset.json
 
       # 5. 다운로드한 설계도의 이미지 주소를 방금 만든 신규 이미지로 교체
       - name: Render Amazon ECS task definitions
