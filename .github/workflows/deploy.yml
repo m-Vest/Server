@@ -74,3 +74,28 @@ jobs:
           # asset 빌드 및 푸시
           docker build -t $ECR_REGISTRY/mvest-asset:latest service/asset
           docker push $ECR_REGISTRY/mvest-asset:latest
+
+      # 4. AWS에서 기존 태스크 정의(설계도) 다운로드
+      - name: Download active task definitions
+        run: |
+          aws ecs describe-task-definition --task-definition mvest-core-task --query taskDefinition > task-definition-core.json
+          aws ecs describe-task-definition --task-definition mvest-order-task --query taskDefinition > task-definition-order.json
+          aws ecs describe-task-definition --task-definition mvest-asset-task --query taskDefinition > task-definition-asset.json
+
+      # 5. 다운로드한 설계도의 이미지 주소를 방금 만든 신규 이미지로 교체
+      - name: Render Amazon ECS task definitions
+        id: render-tasks
+        env:
+          REGISTRY: ${{ steps.build-image.outputs.registry }}
+        run: |
+          # 각 json 파일 내부의 이미지 경로를 새 ECR 이미지로 업데이트
+          sed -i "s|\"image\": \".*mvest-core.*\"|\"image\": \"$REGISTRY/mvest-core:latest\"|g" task-definition-core.json
+          sed -i "s|\"image\": \".*mvest-order.*\"|\"image\": \"$REGISTRY/mvest-order:latest\"|g" task-definition-order.json
+          sed -i "s|\"image\": \".*mvest-asset.*\"|\"image\": \"$REGISTRY/mvest-asset.*\"|\"image\": \"$REGISTRY/mvest-asset:latest\"|g" task-definition-asset.json
+
+      # 6. 최종 수정된 설계도를 ECS에 배포하고 서비스 실시간 재시작 명령
+      - name: Deploy Amazon ECS task definitions
+        run: |
+          aws ecs update-service --cluster mvest-cluster --service mvest-core-service --task-definition mvest-core-task --force-new-deployment
+          aws ecs update-service --cluster mvest-cluster --service mvest-order-service --task-definition mvest-order-task --force-new-deployment
+          aws ecs update-service --cluster mvest-cluster --service mvest-asset-service --task-definition mvest-asset-task --force-new-deployment
