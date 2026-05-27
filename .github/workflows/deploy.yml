@@ -9,7 +9,7 @@ on:
         default: 'main'
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -45,60 +45,32 @@ jobs:
           ./gradlew :service:order:bootJar -x test
           ./gradlew :service:asset:bootJar -x test
 
-      - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      # 1. AWS 자격 증명 설정 (IAM User 기반 또는 OIDC 권장)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }} # 예: ap-northeast-2
 
-      # Docker Image Build
-      - name: Build Docker Images
+      # 2. AWS ECR 로그인
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 3. Docker Image 빌드 및 ECR 푸시
+      - name: Build, tag, and push images to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t yh0872/mvest-core:latest service/core
-          docker build -t yh0872/mvest-order:latest service/order
-          docker build -t yh0872/mvest-asset:latest service/asset
-
-      # Push Images
-      - name: Push Docker Images
-        run: |
-          docker push yh0872/mvest-core:latest
-          docker push yh0872/mvest-order:latest
-          docker push yh0872/mvest-asset:latest
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install SSH Client
-        run: sudo apt-get update && sudo apt-get install -y openssh-client
-
-      - name: Create SSH Key File
-        run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > ssh_key.pem
-          chmod 600 ssh_key.pem
-
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-            # core
-            sudo docker pull yh0872/mvest-core:latest
-            sudo docker rm -f mvest-core || true
-            sudo docker run -d \
-              -p 9000:9000 \
-              --name mvest-core \
-              yh0872/mvest-core:latest
-
-            # order
-            sudo docker pull yh0872/mvest-order:latest
-            sudo docker rm -f mvest-order || true
-            sudo docker run -d \
-              -p 9001:9001 \
-              --name mvest-order \
-              yh0872/mvest-order:latest
-
-            # asset
-            sudo docker pull yh0872/mvest-asset:latest
-            sudo docker rm -f mvest-asset || true
-            sudo docker run -d \
-              -p 9002:9002 \
-              --name mvest-asset \
-              yh0872/mvest-asset:latest
-          EOF
+          # core 빌드 및 푸시
+          docker build -t $ECR_REGISTRY/mvest-core:latest service/core
+          docker push $ECR_REGISTRY/mvest-core:latest
+          
+          # order 빌드 및 푸시
+          docker build -t $ECR_REGISTRY/mvest-order:latest service/order
+          docker push $ECR_REGISTRY/mvest-order:latest
+          
+          # asset 빌드 및 푸시
+          docker build -t $ECR_REGISTRY/mvest-asset:latest service/asset
+          docker push $ECR_REGISTRY/mvest-asset:latest
