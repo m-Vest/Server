@@ -83,22 +83,21 @@ jobs:
           aws ecs describe-task-definition --task-definition mvest-asset-task --query taskDefinition > task-definition-asset.json
 
       # 5. 다운로드한 설계도의 이미지 주소를 방금 만든 신규 이미지로 교체
-      # (AWS CLI로 재등록할 때 방해가 되는 불필요한 메타데이터 필드들도 함께 청소)
       - name: Render Amazon ECS task definitions
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           # 이미지 주소 업데이트
-          sed -i "s|\"image\": \".*mvest-core.*\"|\"image\": \"$REGISTRY/mvest-core:latest\"|g" task-definition-core.json
-          sed -i "s|\"image\": \".*mvest-order.*\"|\"image\": \"$REGISTRY/mvest-order:latest\"|g" task-definition-core.json
-          sed -i "s|\"image\": \".*mvest-asset.*\"|\"image\": \"$REGISTRY/mvest-asset:latest\"|g" task-definition-asset.json
+          sed -i 's|"image": ".*mvest-core.*"|"image": "'"$REGISTRY"'/mvest-core:latest"|g' task-definition-core.json
+          sed -i 's|"image": ".*mvest-order.*"|"image": "'"$REGISTRY"'/mvest-order:latest"|g' task-definition-order.json
+          sed -i 's|"image": ".*mvest-asset.*"|"image": "'"$REGISTRY"'/mvest-asset:latest"|g' task-definition-asset.json
           
           # AWS 재등록 시 에러를 유발하는 읽기 전용 필드들 삭제
           jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition-core.json > temp-core.json && mv temp-core.json task-definition-core.json
           jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition-order.json > temp-order.json && mv temp-order.json task-definition-order.json
           jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition-asset.json > temp-asset.json && mv temp-asset.json task-definition-asset.json
 
-      # 6. 새로 만들어진 json 설계도를 AWS에 정식 등록
+      # 6. 새로 만들어진 json 설계도를 AWS에 정식 등록하고 롤링 배포 가동
       - name: Deploy Amazon ECS task definitions
         run: |
           # Core 배포
