@@ -4,4 +4,5 @@ import mvest.order.domain.Order;
 
 public interface OrderRepository {
     void save(Order order);
+    boolean existsByOrderId(String orderId);
 }
