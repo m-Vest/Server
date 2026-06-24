@@ -19,4 +19,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         OrderEntity entity = OrderMapper.toEntity(order);
         orderJpaRepository.save(entity);
     }
+
+    @Override
+    public boolean existsByOrderId(String orderId) {
+        return orderJpaRepository.existsByOrderId(orderId);
+    }
 }

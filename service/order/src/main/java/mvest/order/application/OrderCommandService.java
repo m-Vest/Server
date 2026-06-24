@@ -26,6 +26,11 @@ public class OrderCommandService {
 
     public void executeOrder(OrderSubmittedEventPayload payload) {
 
+        // 멱등성 방어
+        if (orderRepository.existsByOrderId(payload.getOrderId())) {
+            return;
+        }
+
         StockPrice stockPrice = stockRepository.findByStockCode(payload.getStockCode())
                 .orElseThrow(() -> new BusinessException(StockErrorCode.STOCK_NOT_FOUND));
 
